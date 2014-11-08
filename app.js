@@ -10,11 +10,13 @@ function playSound(when, buffer) {
 }
 
 function sequencePlay(sequence, tempo) {
-    var quarterNote = 60.0 / tempo
+    var sixteenthNote = 60.0 / tempo / 4.0
     var when = 0
     for (var i = 0; i < sequence.length; i++) {
-        playSound(when, sequence[i])
-        when = when + quarterNote
+        if (sequence[i] != '') {
+            playSound(when, sequence[i])
+        }
+        when = when + sixteenthNote
     }
 }
 
@@ -22,18 +24,28 @@ window.onload = function() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     context = new AudioContext();
     bufferLoader = new BufferLoader(context,
-        ['audio/cowbell.mp3','audio/hihat.mp3'],
+        ['audio/kick.mp3', 'audio/snare.mp3', 
+        'audio/hihat.mp3', 'audio/rim.mp3',
+        'audio/cowbell.mp3'
+        ],
         audioLoaded
     );
     bufferLoader.load();
 }
 
 function audioLoaded(bufferList) {
-    var cowbell = bufferList[0]
-    var hihat = bufferList[1]
+    var kick = bufferList[0]
+    var snare = bufferList[1]
+    var hihat = bufferList[2]
+    var rim = bufferList[3]
+    var cowbell = bufferList[4]
 
-    var tempo = 180
-    sequence = [cowbell, hihat, cowbell, hihat]
+    var tempo = 120
+    sequence = [snare, '', hihat, '', 
+                cowbell, '', hihat, '',
+                snare, '', rim, '', 
+                cowbell, '', hihat, '',  
+                ]
     sequencePlay(sequence, tempo)
 
 }
