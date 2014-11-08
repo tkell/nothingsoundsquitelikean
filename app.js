@@ -1,3 +1,8 @@
+// I will need to wrap all of these globals in a nice Howler-esq object
+var context = null
+var tempo = 120
+var sequence = []
+
 function info(string) {
     console.log(string)
 }
@@ -11,7 +16,7 @@ function playSound(when, buffer) {
 
 function sequencePlay(sequence, tempo) {
     var sixteenthNote = 60.0 / tempo / 4.0
-    var when = 0
+    var when = context.currentTime
     for (var i = 0; i < sequence.length; i++) {
         if (sequence[i] != '') {
             playSound(when, sequence[i])
@@ -21,10 +26,11 @@ function sequencePlay(sequence, tempo) {
 }
 
 window.onload = function() {
+    // Load web audio, pass to audioLoaded
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     context = new AudioContext();
     bufferLoader = new BufferLoader(context,
-        ['audio/kick.mp3', 'audio/snare.mp3', 
+        ['audio/kick.mp3', 'audio/snare.mp3',
         'audio/hihat.mp3', 'audio/rim.mp3',
         'audio/cowbell.mp3'
         ],
@@ -40,12 +46,9 @@ function audioLoaded(bufferList) {
     var rim = bufferList[3]
     var cowbell = bufferList[4]
 
-    var tempo = 120
     sequence = [snare, '', hihat, '', 
                 cowbell, '', hihat, '',
                 snare, '', rim, '', 
-                cowbell, '', hihat, '',  
-                ]
-    sequencePlay(sequence, tempo)
-
+                cowbell, '', hihat, '' 
+               ]
 }
