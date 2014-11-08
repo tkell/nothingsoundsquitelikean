@@ -2,6 +2,7 @@
 var context = null
 var tempo = 120
 var sequence = []
+var sequence2 = []
 var playback = false
 var currentlyQueued = []
 var currentCallbacks = []
@@ -22,6 +23,9 @@ function startSequencer() {
     playback = true
     sequencePlay(sequence, tempo, function() {
         console.log('nothing sounds quite like an')
+    })
+    sequencePlay(sequence2, tempo, function() {
+        console.log('eight-oh-eight')
     })
 }
 
@@ -92,9 +96,15 @@ function audioLoaded(bufferList) {
     var rim = bufferList[3]
     var cowbell = bufferList[4]
 
-    sequence = [snare, '', hihat, '', 
-                cowbell, '', hihat, '',
-                snare, '', rim, '', 
-                cowbell, '', hihat, '' 
+    sequence = [snare, '', '', '',
+                cowbell, '', '', '',
+                snare, '', '', '',
+                cowbell, '', '', ''
                ]
+
+    sequence2 = ['', '', hihat, '',
+            '', '', hihat, '',
+            '', '', hihat, '',
+            '', '', hihat, ''
+           ]
 }
