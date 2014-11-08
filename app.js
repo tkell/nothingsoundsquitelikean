@@ -4,6 +4,7 @@ var tempo = 120
 var sequence = []
 var playback = false
 var currentlyQueued = []
+var currentCallbacks = []
 
 function info(string) {
     console.log(string)
@@ -19,21 +20,30 @@ function playSound(when, buffer) {
 
 function startSequencer() {
     playback = true
-    sequencePlay(sequence, tempo)
+    sequencePlay(sequence, tempo, function() {
+        console.log('nothing sounds quite like an')
+    })
 }
 
 function stopSequencer () {
     playback = false
-    // will need to stop currently queued items...
+
+    // Stop queued sounds
     for (var i = 0; i < currentlyQueued.length; i++) {
         if (currentlyQueued[i] != null) {
             currentlyQueued[i].stop()
         }
     }
     currentlyQueued = []
+
+    // Clear queued callbacks
+    for (var i = 0; i < currentCallbacks.length; i++) {
+        clearTimeout(currentCallbacks[i])
+    }
+    currentCallbacks = []
 }
 
-function sequencePlay(sequence, tempo) {
+function sequencePlay(sequence, tempo, onPlayCallback) {
     var sixteenthNote = 60.0 / tempo / 4.0
     var when = context.currentTime
     for (var i = 0; i < sequence.length; i++) {
@@ -43,13 +53,20 @@ function sequencePlay(sequence, tempo) {
         if (sequence[i] != '') {
             queuedSound = playSound(when, sequence[i])
             currentlyQueued.push(queuedSound)
+            // Schedule callbacks
+            if (typeof(onPlayCallback) != "undefined") {
+                theTime = (when - context.currentTime) *  1000
+                currentCallbacks.push(setTimeout(onPlayCallback, theTime))
+            }
         }
         when = when + sixteenthNote
     }
+
+    // Loop
     if (playback == true) {
-        var totalTime = sixteenthNote * 16 * 1000 // seconds vs milleseconds
+        var totalTime = sixteenthNote * 16 * 1000
         setTimeout(function() {
-            sequencePlay(sequence, tempo)
+            sequencePlay(sequence, tempo, onPlayCallback)
         }, totalTime)
     }
 }
