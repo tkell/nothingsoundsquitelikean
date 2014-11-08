@@ -1,0 +1,1 @@
+Making a drum-machine, via @mattetti's sm-808:  https://github.com/mattetti/sm-808/
