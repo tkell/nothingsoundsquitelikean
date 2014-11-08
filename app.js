@@ -2,37 +2,35 @@ function info(string) {
     console.log(string)
 }
 
-// I am not using a howler.js sound sprite here, 
-// as I am going to need to truncate the playback time
-// of these sounds to get tempo changes to work.
-function loadAudio() {
-    var kick = new Howl({urls: ['audio/kick.mp3']})
-    var snare = new Howl({urls: ['audio/snare.mp3']})
-    var hihat = new Howl({urls: ['audio/hihat.mp3']})
-    var rim = new Howl({urls: ['audio/rim.mp3']})
-    var cowbell = new Howl({urls: ['audio/cowbell.mp3']})
-    return [kick, snare, hihat, rim, cowbell]
+function playSound(when, buffer) {
+  var source = context.createBufferSource()
+  source.buffer = buffer
+  source.connect(context.destination)
+  source.start(when)
 }
 
 function sequencePlay(sequence) {
-
+    var when = 0
     for (var i = 0; i < sequence.length; i++) {
-        sequence[i].play()
+        sequence[i].play('', '', when)
+        info(when)
+        when = when + 1
     }
 }
 
-
 window.onload = function() {
-
-    sounds = loadAudio()
-    var kick = sounds[0]
-    var snare = sounds[1]
-    var hihat = sounds[2]
-    var rim = sounds[3]
-    var cowbell = sounds[4]
-
-    var sequence = [kick, snare, cowbell]
-    sequencePlay(sequence)
-
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    context = new AudioContext();
+    bufferLoader = new BufferLoader(context,
+        ['audio/cowbell.mp3','audio/hihat.mp3'],
+        audioLoaded
+    );
+    bufferLoader.load();
 }
 
+function audioLoaded(bufferList) {
+    var cowbell = bufferList[0]
+    var hihat = bufferList[1]
+    playSound(0, cowbell)
+    playSound(1, hihat)
+}
