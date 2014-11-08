@@ -9,12 +9,12 @@ function playSound(when, buffer) {
   source.start(when)
 }
 
-function sequencePlay(sequence) {
+function sequencePlay(sequence, tempo) {
+    var quarterNote = 60.0 / tempo
     var when = 0
     for (var i = 0; i < sequence.length; i++) {
-        sequence[i].play('', '', when)
-        info(when)
-        when = when + 1
+        playSound(when, sequence[i])
+        when = when + quarterNote
     }
 }
 
@@ -31,6 +31,9 @@ window.onload = function() {
 function audioLoaded(bufferList) {
     var cowbell = bufferList[0]
     var hihat = bufferList[1]
-    playSound(0, cowbell)
-    playSound(1, hihat)
+
+    var tempo = 180
+    sequence = [cowbell, hihat, cowbell, hihat]
+    sequencePlay(sequence, tempo)
+
 }
