@@ -1,46 +1,43 @@
 var sequenceApp = angular.module('sequenceApp', [])
 
-// It would feel angular to make five Sequences,
-// and then attach each Sequence to a Sequencer.
-// Each Sequence has a name and a pattern and some way of pointing to the buffer
 sequenceApp.controller('SequencerControl', function ($scope, $http) {
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
 
-    $http.get('audio/cowbell.mp3', {'responseType': 'arraybuffer'}).success(function(data) {
-        console.log('we got the audio data')
-
-        context.decodeAudioData(data, function(buffer) {
-            console.log('about to load the data')
-            tempBuffer = null
-            tempBuffer = buffer
-            playSound(0, tempBuffer)
-        }, function() {console.log('Error Loading audio!')})
-
-    })
-
-    $scope.tempo = 120
     $scope.sequences = {
-        'kick': {'name': 'Kick', 'sound':  'audio/kick.mp3', 'pattern':  
+        'kick': {'name': 'Kick', 'buffer':  null, 'pattern':  
             ['x', '-', '-', '-', 'x', '-', '-', '-', 'x', '-', '-', '-', 'x', '-', '-', '-']
         },
-        'snare': {'name': 'Snare', 'sound':  'audio/snare.mp3', 'pattern':  
+        'snare': {'name': 'Snare', 'buffer':  null, 'pattern':  
             ['-', '-', '-', '-', 'x', '-', '-', '-', 'x', '-', '-', '-', '-', '-', '-', '-']
         },
-        'hihat': {'name': 'Hihat', 'sound':  'audio/hihat.mp3', 'pattern':  
+        'hihat': {'name': 'Hihat', 'buffer':  null, 'pattern':  
             ['-', '-', 'x', '-', '-', '-', 'x', '-', '-', 'x', '-', '-', '-', 'x', '-', '-']
         },
-        'rim': {'name': 'Rim', 'sound':  'audio/rim.mp3', 'pattern':  
+        'rim': {'name': 'Rim', 'buffer':  null, 'pattern':  
             ['-', 'x', '-', 'x', '-', '-', '-', '-', 'x', '-', '-', '-', '-', '-', '-', '-']
         },
-        'cowbell': {'name': 'Cowbell', 'sound':  'audio/cowbell.mp3', 'pattern':  
+        'cowbell': {'name': 'Cowbell', 'buffer':  null, 'pattern':  
             ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'x', '-', 'x', '-', '-']
         },
     }
 
+    loadAudio = function(url, track) {
+        $http.get(url, {'responseType': 'arraybuffer'}).success(function(data) {
+            context.decodeAudioData(data, function(buffer) {
+                $scope.sequences[track].buffer = buffer
+            }, function() {console.log('Error Loading audio!')})
+        })
+    }
 
+    loadAudio('audio/kick.mp3', 'kick')
+    loadAudio('audio/snare.mp3', 'snare')
+    loadAudio('audio/hihat.mp3', 'hihat')
+    loadAudio('audio/rim.mp3', 'rim')
+    loadAudio('audio/cowbell.mp3', 'cowbell')
 
+    $scope.tempo = 120
     var steps = 16
     var buffers = {}
     var currentlyQueued = []
