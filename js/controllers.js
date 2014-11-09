@@ -6,20 +6,20 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     var context = new AudioContext();
 
     $scope.sequences = {
-        'kick': {'name': 'Kick', 'buffer': null, 'i': -1, 'displayChar': 'k', 'pattern':  
-            ['k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-']
+        'kick': {'name': 'Kick', 'buffer': null, 'i': -1, 'displayChar': 'k', 'gain': 1.0,
+        'pattern':  ['k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-']
         },
-        'snare': {'name': 'Snare', 'buffer': null, 'i': -1, 'displayChar': 's', 'pattern':  
-            ['-', '-', '-', '-', 's', '-', '-', '-', '-', '-', '-', '-', 's', '-', '-', '-']
+        'snare': {'name': 'Snare', 'buffer': null, 'i': -1, 'displayChar': 's', 'gain': 1.0,
+        'pattern':  ['-', '-', '-', '-', 's', '-', '-', '-', '-', '-', '-', '-', 's', '-', '-', '-']
         },
-        'hihat': {'name': 'Hihat', 'buffer': null, 'i': -1, 'displayChar': 'h', 'pattern':  
-            ['-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-']
+        'hihat': {'name': 'Hihat', 'buffer': null, 'i': -1, 'displayChar': 'h', 'gain': 0.6,
+        'pattern':  ['-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-']
         },
-        'rim': {'name': 'Rim', 'buffer': null, 'i': -1, 'displayChar': 'r','pattern':  
-            ['-', 'r', '-', 'r', '-', 'r', 'r', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+        'rim': {'name': 'Rim', 'buffer': null, 'i': -1, 'displayChar': 'r', 'gain': 0.6,
+        'pattern':  ['-', 'r', '-', 'r', '-', 'r', 'r', '-', '-', '-', '-', '-', '-', '-', '-', '-']
         },
-        'cowbell': {'name': 'Cowbell', 'buffer': null, 'i': -1, 'displayChar': 'c', 'pattern':  
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'c', '-', 'c', '-', '-']
+        'cowbell': {'name': 'Cowbell', 'buffer': null, 'i': -1, 'displayChar': 'c', 'gain': 0.5,
+        'pattern':  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'c', '-', 'c', '-', '-']
         },
     }
 
@@ -108,7 +108,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
 
             // Play the sound, if any
             if (sequence.pattern[i] != '-') {
-                queuedSound = playSound(when, sequence.buffer)
+                queuedSound = playSound(when, sequence.buffer, sequence.gain)
                 currentlyQueued.push(queuedSound)
                 // Schedule extra callbacks
                 if (typeof(onPlayCallback) != "undefined") {
@@ -127,10 +127,16 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     }
 
     // Raw, strongly-timed WebAudio playback
-    playSound = function(when, buffer) {
+    playSound = function(when, buffer, gain) {
         var source = context.createBufferSource()
         source.buffer = buffer
-        source.connect(context.destination)
+
+        var gainNode = context.createGain();
+        gainNode.gain.value = gain;
+
+        source.connect(gainNode);
+        gainNode.connect(context.destination);
+        
         source.start(when)
         return source
     }

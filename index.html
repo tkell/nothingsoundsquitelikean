@@ -18,6 +18,7 @@
                 <span class="sequence" ng-repeat="beat in sequence.pattern track by $index">
                     <span class="beat" ng-class="{playing: checkIndex(sequence, $index)}" ng-click="toggleBeat(sequence, $index)">{{beat}}</span>
                 </span>
+                <input class="gainSlider" ng-model="sequence.gain" min ="0.0" max="1.0" step ="0.05" type="range"/>
             </li>
         </ul>
     </div>
