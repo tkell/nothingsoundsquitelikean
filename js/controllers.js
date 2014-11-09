@@ -4,6 +4,9 @@ var sequenceApp = angular.module('sequenceApp', [])
 // and then attach each Sequence to a Sequencer.
 // Each Sequence has a name and a pattern and some way of pointing to the buffer
 sequenceApp.controller('SequencerControl', function ($scope) {
+
+    $scope.tempo = 120
+
     $scope.sequences = {
     'kick': {'name': 'Kick', 'sound':  'audio/kick.mp3', 'pattern':  
         ['x', '-', '-', '-', 'x', '-', '-', '-', 'x', '-', '-', '-', 'x', '-', '-', '-']
@@ -29,6 +32,14 @@ sequenceApp.controller('SequencerControl', function ($scope) {
         } else {
             $scope.sequences[track].pattern[index] = 'x'
         }
+    }
+
+    $scope.start = function() {
+        console.log('starting the sequencer')
+    }
+
+    $scope.stop = function() {
+        console.log('stopping the sequencer')
     }
 
     // Utility to get back an object's keys in the initial order

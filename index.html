@@ -9,6 +9,12 @@
 <body>
     Hello Drum Machine
     <div class="sequencer" ng-controller="SequencerControl">
+
+        <span class="startButton" ng-click="start()">Start</span>
+        <span class="stopButton" ng-click="stop()">Stop</span>
+
+        <input type="text" ng-model="tempo">
+
         <ul>
             <li ng-repeat="key in getKeys(sequences)" ng-init="sequence = sequences[key]">
                 <span>{{sequence.name}}</span>
