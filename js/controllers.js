@@ -30,4 +30,12 @@ sequenceApp.controller('SequencerControl', function ($scope) {
             $scope.sequences[track].pattern[index] = 'x'
         }
     }
+
+    // Utility to get back an object's keys in the initial order
+    $scope.getKeys = function(obj){
+        if (!obj) {
+            return [];
+        }
+        return Object.keys(obj)
+    }
 })

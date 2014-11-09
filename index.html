@@ -10,7 +10,7 @@
     Hello Drum Machine
     <div class="sequencer" ng-controller="SequencerControl">
         <ul>
-            <li ng-repeat="sequence in sequences">
+            <li ng-repeat="key in getKeys(sequences)" ng-init="sequence = sequences[key]">
                 <span>{{sequence.name}}</span>
                 <span class="sequence" ng-repeat="beat in sequence.pattern track by $index">
                     <span class="beat" ng-click="toggleBeat(sequence.name, $index)">{{beat}}</span>
