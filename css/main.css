@@ -1,0 +1,32 @@
+body {
+    margin: 15px, 15px, 15px, 15px;
+    background-color: #FDFEF3;
+    font-family: monaco,Consolas,"Lucida Console",monospace
+}
+
+h1 {
+    text-align: right;
+    font-size: 300%
+}
+
+ul {
+    list-style-type: none;
+    text-align: center;
+}
+
+input.tempo {
+    width: 40px;
+}
+
+.controls {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.sequence {
+    font-size: 150%
+}
+
+.beat {
+    font-size: 250%
+}

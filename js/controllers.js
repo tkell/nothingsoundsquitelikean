@@ -7,19 +7,19 @@ sequenceApp.controller('SequencerControl', function ($scope, $http) {
 
     $scope.sequences = {
         'kick': {'name': 'Kick', 'buffer':  null, 'pattern':  
-            ['x', '-', '-', '-', 'x', '-', '-', '-', 'x', '-', '-', '-', 'x', '-', '-', '-']
+            ['k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-']
         },
         'snare': {'name': 'Snare', 'buffer':  null, 'pattern':  
-            ['-', '-', '-', '-', 'x', '-', '-', '-', 'x', '-', '-', '-', '-', '-', '-', '-']
+            ['-', '-', '-', '-', 's', '-', '-', '-', '-', '-', '-', '-', 's', '-', '-', '-']
         },
         'hihat': {'name': 'Hihat', 'buffer':  null, 'pattern':  
-            ['-', '-', 'x', '-', '-', '-', 'x', '-', '-', 'x', '-', '-', '-', 'x', '-', '-']
+            ['-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-']
         },
         'rim': {'name': 'Rim', 'buffer':  null, 'pattern':  
-            ['-', 'x', '-', 'x', '-', '-', '-', '-', 'x', '-', '-', '-', '-', '-', '-', '-']
+            ['-', 'r', '-', 'r', '-', 'r', 'r', '-', '-', '-', '-', '-', '-', '-', '-', '-']
         },
         'cowbell': {'name': 'Cowbell', 'buffer':  null, 'pattern':  
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'x', '-', 'x', '-', '-']
+            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'c', '-', 'c', '-', '-']
         },
     }
 
@@ -45,10 +45,11 @@ sequenceApp.controller('SequencerControl', function ($scope, $http) {
 
     $scope.toggleBeat = function(trackName, index) {
         var track = trackName.toLowerCase()
-        if ($scope.sequences[track].pattern[index] == 'x') {
-            $scope.sequences[track].pattern[index] = '-'
+        var letter = track.charAt(0)
+        if ($scope.sequences[track].pattern[index] == '-') {
+            $scope.sequences[track].pattern[index] = letter
         } else {
-            $scope.sequences[track].pattern[index] = 'x'
+            $scope.sequences[track].pattern[index] = '-'
         }
     }
 
@@ -95,7 +96,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http) {
             if (playback == false) {
                 break
             }
-            if (sequence.pattern[i] == 'x') {
+            if (sequence.pattern[i] != '-') {
                 queuedSound = playSound(when, sequence.buffer)
                 currentlyQueued.push(queuedSound)
                 // Schedule callbacks

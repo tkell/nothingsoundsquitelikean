@@ -1,28 +1,25 @@
 <html ng-app="sequenceApp">
-
 <head>
+    <title>nothingsoundsquitelikean - 808alike drum machine</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
     <script src="js/angular.min.js"></script>
     <script src="js/controllers.js"></script>
 </head>
-
 <body>
-    Hello Drum Machine
+    <h1>nothing sounds quite like an</h1>
     <div class="sequencer" ng-controller="SequencerControl">
-
-        <span class="startButton" ng-click="start()">Start</span>
-        <span class="stopButton" ng-click="stop()">Stop</span>
-        <input type="text" ng-model="tempo">
-
-        <ul>
+        <div class="controls">
+                <span class="startButton" ng-click="start()">start</span> |
+                <span class="stopButton" ng-click="stop()">stop</span> | 
+                <input type="text" class="tempo" ng-model="tempo"> bpm
+        </div>
+        <ul class="track-list">
             <li ng-repeat="key in getKeys(sequences)" ng-init="sequence = sequences[key]">
-                <span>{{sequence.name}}</span>
                 <span class="sequence" ng-repeat="beat in sequence.pattern track by $index">
                     <span class="beat" ng-click="toggleBeat(sequence.name, $index)">{{beat}}</span>
                 </span>
-                
             </li>
         </ul>
     </div>
-
 </body>
 </html>
