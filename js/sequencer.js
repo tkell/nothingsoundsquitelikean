@@ -79,7 +79,6 @@ var Sequencer = function(audioContext, audioFiles) {
 
     // Master play / loop function
     sequencePlay = function (sequence, tempo, onPlayCallback) {
-        var self = this
         var sixteenthNote = 60.0 / tempo / 4.0
         var when = context.currentTime
         for (var i = 0; i < sequence.length; i++) {

@@ -38,7 +38,6 @@ sequenceApp.controller('SequencerControl', function ($scope, $http) {
     loadAudio('audio/cowbell.mp3', 'cowbell')
 
     $scope.tempo = 120
-    var steps = 16
     var buffers = {}
     var currentlyQueued = []
     var currentCallbacks = []
@@ -55,10 +54,66 @@ sequenceApp.controller('SequencerControl', function ($scope, $http) {
 
     $scope.start = function() {
         console.log('starting the sequencer')
+        playback = true
+        sequencePlay($scope.sequences.kick, function() {
+            console.log('kick')
+        })
+        sequencePlay($scope.sequences.snare, function() {
+            console.log('snare')
+        })
+        sequencePlay($scope.sequences.hihat, function() {
+            console.log('hi-hat')
+        })
+        sequencePlay($scope.sequences.rim)
+        sequencePlay($scope.sequences.cowbell)
     }
 
     $scope.stop = function() {
         console.log('stopping the sequencer')
+        playback = false
+        // Stop queued sounds
+        for (var i = 0; i < currentlyQueued.length; i++) {
+            if (currentlyQueued[i] != null) {
+                currentlyQueued[i].stop()
+            }
+        }
+        currentlyQueued = []
+
+        // Clear queued callbacks
+        for (var i = 0; i < currentCallbacks.length; i++) {
+            clearTimeout(currentCallbacks[i])
+        }
+        currentCallbacks = []
+    }
+
+
+    // Master play / loop function
+    sequencePlay = function (sequence, onPlayCallback) {
+        var sixteenthNote = 60.0 / $scope.tempo / 4.0
+        var when = context.currentTime
+        for (var i = 0; i < sequence.pattern.length; i++) {
+            if (playback == false) {
+                break
+            }
+            if (sequence.pattern[i] == 'x') {
+                queuedSound = playSound(when, sequence.buffer)
+                currentlyQueued.push(queuedSound)
+                // Schedule callbacks
+                if (typeof(onPlayCallback) != "undefined") {
+                    theTime = (when - context.currentTime) *  1000
+                    currentCallbacks.push(setTimeout(onPlayCallback, theTime))
+                }
+            }
+            when = when + sixteenthNote
+        }
+
+        // Loop
+        if (playback == true) {
+            var totalTime = sixteenthNote * 16 * 1000
+            setTimeout(function() {
+                sequencePlay(sequence, onPlayCallback)
+            }, totalTime)
+        }
     }
 
     // Raw, strongly-timed WebAudio playback
