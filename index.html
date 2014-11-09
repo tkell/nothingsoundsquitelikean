@@ -1,17 +1,24 @@
-<html>
+<html ng-app="sequenceApp">
+
+<head>
+    <script src="js/angular.min.js"></script>
+    <script src="js/sequencer.js"></script>
+    <script src="js/controllers.js"></script>
+</head>
 
 <body>
-    <script src="js/sequencer.js"></script>
-    <script src="app.js"></script>
-
     Hello Drum Machine
-
-    <button class="start-button" type="button" onclick="seq.start()">Play</button>
-    <button class="stop-button" type="button" onclick="seq.stop()">Stop</button>
-
-    <br />
-    Tempo:  <input type="text" class="tempoEntry" value="120" onkeypress="updateTempo(event)" />
+    <div class="sequencer" ng-controller="SequencerControl">
+        <ul>
+            <li ng-repeat="sequence in sequences">
+                <span>{{sequence.name}}</span>
+                <span class="sequence" ng-repeat="beat in sequence.pattern track by $index">
+                    <span class="beat" ng-click="toggleBeat(sequence.name, $index)">{{beat}}</span>
+                </span>
+                
+            </li>
+        </ul>
+    </div>
 
 </body>
-
 </html>
