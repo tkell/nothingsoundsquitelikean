@@ -1,24 +1,24 @@
 var sequenceApp = angular.module('sequenceApp', [])
 
-sequenceApp.controller('SequencerControl', function ($scope, $http) {
+sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
 
     $scope.sequences = {
-        'kick': {'name': 'Kick', 'buffer':  null, 'pattern':  
+        'kick': {'name': 'Kick', 'buffer': null, 'i': -1, 'displayChar': 'k', 'pattern':  
             ['k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-']
         },
-        'snare': {'name': 'Snare', 'buffer':  null, 'pattern':  
+        'snare': {'name': 'Snare', 'buffer': null, 'i': -1, 'displayChar': 's', 'pattern':  
             ['-', '-', '-', '-', 's', '-', '-', '-', '-', '-', '-', '-', 's', '-', '-', '-']
         },
-        'hihat': {'name': 'Hihat', 'buffer':  null, 'pattern':  
+        'hihat': {'name': 'Hihat', 'buffer': null, 'i': -1, 'displayChar': 'h', 'pattern':  
             ['-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-']
         },
-        'rim': {'name': 'Rim', 'buffer':  null, 'pattern':  
+        'rim': {'name': 'Rim', 'buffer': null, 'i': -1, 'displayChar': 'r','pattern':  
             ['-', 'r', '-', 'r', '-', 'r', 'r', '-', '-', '-', '-', '-', '-', '-', '-', '-']
         },
-        'cowbell': {'name': 'Cowbell', 'buffer':  null, 'pattern':  
+        'cowbell': {'name': 'Cowbell', 'buffer': null, 'i': -1, 'displayChar': 'c', 'pattern':  
             ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'c', '-', 'c', '-', '-']
         },
     }
@@ -42,29 +42,23 @@ sequenceApp.controller('SequencerControl', function ($scope, $http) {
     var currentlyQueued = []
     var currentCallbacks = []
     var playback = false
+    var stepStyle = "{color:'red'}"
 
-    $scope.toggleBeat = function(trackName, index) {
-        var track = trackName.toLowerCase()
-        var letter = track.charAt(0)
-        if ($scope.sequences[track].pattern[index] == '-') {
-            $scope.sequences[track].pattern[index] = letter
+    $scope.toggleBeat = function(sequence, index) {
+        var letter = sequence.displayChar
+        if (sequence.pattern[index] == '-') {
+            sequence.pattern[index] = letter
         } else {
-            $scope.sequences[track].pattern[index] = '-'
+            sequence.pattern[index] = '-'
         }
     }
 
     $scope.start = function() {
         console.log('starting the sequencer')
         playback = true
-        sequencePlay($scope.sequences.kick, function() {
-            console.log('kick')
-        })
-        sequencePlay($scope.sequences.snare, function() {
-            console.log('snare')
-        })
-        sequencePlay($scope.sequences.hihat, function() {
-            console.log('hi-hat')
-        })
+        sequencePlay($scope.sequences.kick)
+        sequencePlay($scope.sequences.snare)
+        sequencePlay($scope.sequences.hihat)
         sequencePlay($scope.sequences.rim)
         sequencePlay($scope.sequences.cowbell)
     }
@@ -82,11 +76,22 @@ sequenceApp.controller('SequencerControl', function ($scope, $http) {
 
         // Clear queued callbacks
         for (var i = 0; i < currentCallbacks.length; i++) {
-            clearTimeout(currentCallbacks[i])
+            $timeout.cancel(currentCallbacks[i])
         }
         currentCallbacks = []
     }
 
+    $scope.checkIndex = function(sequence, index) {
+        if (sequence.i == index) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    function tick(sequence, index) {
+        sequence.i = index
+    }
 
     // Master play / loop function
     sequencePlay = function (sequence, onPlayCallback) {
@@ -96,22 +101,26 @@ sequenceApp.controller('SequencerControl', function ($scope, $http) {
             if (playback == false) {
                 break
             }
+            // Update the sequencer's knowledge of where it is
+            var theTime = (when - context.currentTime) *  1000
+            var f = angular.bind(self, tick, sequence, i);
+            currentCallbacks.push($timeout(f, theTime)) 
+
+            // Play the sound, if any
             if (sequence.pattern[i] != '-') {
                 queuedSound = playSound(when, sequence.buffer)
                 currentlyQueued.push(queuedSound)
-                // Schedule callbacks
+                // Schedule extra callbacks
                 if (typeof(onPlayCallback) != "undefined") {
-                    theTime = (when - context.currentTime) *  1000
-                    currentCallbacks.push(setTimeout(onPlayCallback, theTime))
+                    currentCallbacks.push($timeout(onPlayCallback, theTime))
                 }
             }
             when = when + sixteenthNote
         }
-
         // Loop
         if (playback == true) {
             var totalTime = sixteenthNote * 16 * 1000
-            setTimeout(function() {
+            $timeout(function() {
                 sequencePlay(sequence, onPlayCallback)
             }, totalTime)
         }

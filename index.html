@@ -16,7 +16,7 @@
         <ul class="track-list">
             <li ng-repeat="key in getKeys(sequences)" ng-init="sequence = sequences[key]">
                 <span class="sequence" ng-repeat="beat in sequence.pattern track by $index">
-                    <span class="beat" ng-click="toggleBeat(sequence.name, $index)">{{beat}}</span>
+                    <span class="beat" ng-class="{playing: checkIndex(sequence, $index)}" ng-click="toggleBeat(sequence, $index)">{{beat}}</span>
                 </span>
             </li>
         </ul>

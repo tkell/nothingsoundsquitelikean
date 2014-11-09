@@ -30,3 +30,7 @@ input.tempo {
 .beat {
     font-size: 250%
 }
+
+.playing {
+    color: red;
+}
