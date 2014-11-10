@@ -5,7 +5,7 @@
     <script src="js/angular.min.js"></script>
     <script src="js/controllers.js"></script>
 </head>
-<body>
+<body>,a
     <h1>nothing sounds quite like an</h1>
     <div class="sequencer" ng-controller="SequencerControl">
         <div class="controls">
@@ -14,12 +14,12 @@
                 <input type="text" class="tempo" ng-keypress="updateTempo($event)" value="120"> bpm
         </div>
         <ul class="track-list">
-            <li ng-repeat="key in getKeys(sequences)" ng-init="sequence = sequences[key]">
+            <li ng-repeat="sequence in sequences">
                 <span class="sequence" ng-repeat="beat in sequence.pattern track by $index">
                     <span class="beat" ng-class="{playing: checkIndex($index)}" ng-click="toggleBeat(sequence, $index)">{{beat}}</span>
                 </span>
                 <input class="gain" ng-model="sequence.gain" min ="0.0" max="1.0" step ="0.05" type="range"/>
-                <span class="remove-button" ng-click="removeTrack(key)">x</span>
+                <span class="remove-button" ng-click="removeTrack(sequence)">x</span>
             </li>
         </ul>
         <div class='add-track'>
@@ -29,9 +29,10 @@
             <select ng-model="nextSample" ng-options="sample.name for sample in samples">
                 <option value="">-- select sample --</option>
             </select>
-
         </div>
-
+    </div>
+    <div class="footer">
+        <a href="https://github.com/tkell/nothingsoundsquitelikean">minimal 808alike</a> by <a href="http://tide-pool.ca">thor kell</a>, based on the <a href="https://github.com/mattetti/sm-808/">SM-808</a> coding challenge.  
     </div>
 </body>
 </html>

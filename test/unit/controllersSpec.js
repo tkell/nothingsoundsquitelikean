@@ -1,4 +1,4 @@
-describe('SequencerControl', function(){
+describe('SequencerControl', function() {
     var scope
 
     // Set up
@@ -11,39 +11,41 @@ describe('SequencerControl', function(){
     // Tests for toggleBeats
     it('should toggle beats off', function() {
         var index = 0
-        scope.sequences.kick.pattern[index] = 'k'
-        scope.toggleBeat(scope.sequences.kick, index)
-        expect(scope.sequences.kick.pattern[index]).toBe('-')
+        scope.sequences[0].pattern[index] = 'k'
+        scope.toggleBeat(scope.sequences[0], index)
+        expect(scope.sequences[0].pattern[index]).toBe('-')
     })
     it('should toggle beats on, with the letter for the sequence', function() {
         var index = 0
-        var displayChar = scope.sequences.kick.displayChar
-        scope.sequences.kick.pattern[index] = '-'
-        scope.toggleBeat(scope.sequences.kick, index)
-        expect(scope.sequences.kick.pattern[index]).toBe(displayChar)
+        var displayChar = scope.sequences[0].sample.displayChar
+        scope.sequences[0].pattern[index] = '-'
+        scope.toggleBeat(scope.sequences[0], index)
+        expect(scope.sequences[0].pattern[index]).toBe(displayChar)
     })
 
     // Tests for adding tracks
-    it('should add a track to the sequence', function(){
-        var numTracks = Object.keys(scope.sequences).length
-        scope.nextSample = scope.samples[4]
+    it('should add a track to the sequence', function() {
+        var numTracks = scope.sequences.length
+        scope.nextSample = scope.samples[0]
         scope.addTrack()
-        expect(Object.keys(scope.sequences).length).toBe(numTracks + 1)
+        expect(scope.sequences.length).toBe(numTracks + 1)
     })
 
-    it('should give the new track various attributes', function(){
-        scope.nextSample = scope.samples[4]
+    it('should give the new track various attributes', function() {
+        scope.nextSample = scope.samples[0]
         var displayChar = scope.nextSample.displayChar
         var trackName = scope.nextSample.name
 
         scope.addTrack()
-        expect(scope.sequences[trackName].name).toBe(trackName)
-        expect(scope.sequences[trackName].displayChar).toBe(displayChar)
-        expect(scope.sequences[trackName].pattern.length).toBe(16)
+
+        var trackIndex = scope.sequences.length - 1
+        expect(scope.sequences[trackIndex].sample).toBe(scope.nextSample)
+        expect(scope.sequences[trackIndex].gain).toBe(0.7)
+        expect(scope.sequences[trackIndex].pattern.length).toBe(16)
     })
 
     // Tests for removing tracks
-    it('should remove a track from the sequence', function(){
+    it('should remove a track from the sequence', function() {
         var numTracks = Object.keys(scope.sequences).length
         scope.removeTrack('kick')
         expect(Object.keys(scope.sequences).length).toBe(numTracks -1)

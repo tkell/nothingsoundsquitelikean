@@ -46,3 +46,9 @@ input.add-track-char {
 .playing {
     color: red;
 }
+
+.footer {
+    margin-top: 100px;
+    font-size: 80%%;
+    text-align: right;
+}
