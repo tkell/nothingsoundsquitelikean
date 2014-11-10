@@ -37,9 +37,9 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     loadAudio('audio/rim.mp3', 'rim')
     loadAudio('audio/cowbell.mp3', 'cowbell')
 
-    $scope.tempo = 120
-    // Global transport object for dealing timing
+        // Global transport object for dealing timing
     var transport = {
+        'tempo':  120,
         'isPlaying': false,
         'currentIndex': 0,
         'oldIndex': 0,
@@ -56,6 +56,17 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
             sequence.pattern[index] = letter
         } else {
             sequence.pattern[index] = '-'
+        }
+    }
+
+    $scope.updateTempo = function(e) {
+        if (e.keyCode == 13) {
+            var inputTempo = parseInt(e.currentTarget.value)
+            if (inputTempo > 50 && inputTempo < 300) {
+                transport.tempo = inputTempo
+            } else {
+                console.log('Error:  Tempo value out of range')
+            }           
         }
     }
 
@@ -80,7 +91,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     }
 
     function getNextNoteTime(startTime, sixteenthNote) {
-        var loopOffset = transport.numLoops * (240.0 / $scope.tempo)
+        var loopOffset = transport.numLoops * (240.0 / transport.tempo)
         var indexOffset = (transport.currentIndex - transport.oldIndex)  * sixteenthNote
         return startTime + loopOffset + indexOffset
     }
@@ -90,13 +101,18 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
             transport.oldIndex = transport.currentIndex
             return
         }
-        var sixteenthNote = 60.0 / $scope.tempo / 4.0 // seconds
+        var sixteenthNote = 60.0 / transport.tempo / 4.0 // seconds
         var nextNoteTime = getNextNoteTime(startTime, sixteenthNote)
         while (nextNoteTime < context.currentTime + transport.lookAhead) {
             for (sequenceName in $scope.sequences) {
                 var seq = $scope.sequences[sequenceName]
                 if (seq.pattern[transport.currentIndex] != '-') {
                      playSound(nextNoteTime, seq.buffer, seq.gain)
+                } else if (transport.currentIndex == 0 && transport.numLoops == 0) {
+                    // Bootstrap the start:
+                    // Web Audio will not start the audioContext timer moving, 
+                    // unless we give it something to play.
+                    playSound(nextNoteTime, seq.buffer, 0.0)
                 }
             }
             // Increment the overall sequence,
@@ -116,7 +132,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
             }
 
             // Update the tempo
-            sixteenthNote = 60.0 / $scope.tempo / 4.0 // seconds
+            sixteenthNote = 60.0 / transport.tempo / 4.0 // seconds
             nextNoteTime = nextNoteTime + sixteenthNote
         }
 

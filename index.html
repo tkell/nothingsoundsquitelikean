@@ -1,6 +1,6 @@
 <html ng-app="sequenceApp">
 <head>
-    <title>nothingsoundsquitelikean - 808alike drum machine</title>
+    <title>nothingsoundsquitelikean - drum machine</title>
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <script src="js/angular.min.js"></script>
     <script src="js/controllers.js"></script>
@@ -11,7 +11,7 @@
         <div class="controls">
                 <span class="startButton" ng-click="start()">start</span> |
                 <span class="stopButton" ng-click="stop()">stop</span> | 
-                <input type="text" class="tempo" ng-model="tempo"> bpm
+                <input type="text" class="tempo" ng-keypress="updateTempo($event)" value="120"> bpm
         </div>
         <ul class="track-list">
             <li ng-repeat="key in getKeys(sequences)" ng-init="sequence = sequences[key]">
