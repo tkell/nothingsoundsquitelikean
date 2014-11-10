@@ -6,19 +6,19 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     var context = new AudioContext();
 
     $scope.sequences = {
-        'kick': {'name': 'Kick', 'buffer': null, 'displayChar': 'k', 'visualIndex': -1, 'gain': 1.0,
+        'kick': {'name': 'Kick', 'buffer': null, 'displayChar': 'k', 'gain': 1.0,
         'pattern':  ['k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-']
         },
-        'snare': {'name': 'Snare', 'buffer': null, 'displayChar': 's', 'visualIndex': -1, 'gain': 1.0,
+        'snare': {'name': 'Snare', 'buffer': null, 'displayChar': 's', 'gain': 1.0,
         'pattern':  ['-', '-', '-', '-', 's', '-', '-', '-', '-', '-', '-', '-', 's', '-', '-', '-']
         },
-        'hihat': {'name': 'Hihat', 'buffer': null, 'displayChar': 'h', 'visualIndex': -1, 'gain': 0.6,
+        'hihat': {'name': 'Hihat', 'buffer': null, 'displayChar': 'h', 'gain': 0.6,
         'pattern':  ['-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-']
         },
-        'rim': {'name': 'Rim', 'buffer': null, 'displayChar': 'r', 'visualIndex': -1, 'gain': 0.6,
+        'rim': {'name': 'Rim', 'buffer': null, 'displayChar': 'r', 'gain': 0.6,
         'pattern':  ['-', 'r', '-', 'r', '-', 'r', 'r', '-', '-', '-', '-', '-', '-', '-', '-', '-']
         },
-        'cowbell': {'name': 'Cowbell', 'buffer': null, 'displayChar': 'c', 'visualIndex': -1, 'gain': 0.5,
+        'cowbell': {'name': 'Cowbell', 'buffer': null, 'displayChar': 'c', 'gain': 0.5,
         'pattern':  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'c', '-', 'c', '-', '-']
         },
     }
@@ -43,6 +43,9 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     var numLoops = 0
     var currentIndex = 0
     var lastIndex = 0
+
+    var visualIndex = -1
+
     var loopCounter = 0
     var currentlyQueued = []
     var currentCallbacks = []
@@ -82,8 +85,8 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         currentCallbacks = []
     }
 
-    $scope.checkIndex = function(sequence, index) {
-        if (sequence.visualIndex == index) {
+    $scope.checkIndex = function(index) {
+        if (visualIndex == index) {
             return true
         } else {
             return false
@@ -115,13 +118,10 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
             currentIndex = (currentIndex + 1) % 16
 
             // Increment each sequence's graphics, on schedule
-            for (sequenceName in $scope.sequences) {
-                var seq = $scope.sequences[sequenceName]
-                var theTime = (nextNoteTime - context.currentTime) *  1000
-                $timeout(function() {
-                    seq.visualIndex = (seq.visualIndex + 1) % 16
-                }, theTime)
-            }
+            var theTime = (nextNoteTime - context.currentTime) *  1000
+            $timeout(function() {
+                visualIndex = (visualIndex + 1) % 16
+            }, theTime)
 
             // Keep track of where our audio-time loop is
             loopCounter = loopCounter + 1
