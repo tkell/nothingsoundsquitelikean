@@ -63,11 +63,11 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     $scope.start = function() {
         console.log('starting the sequencer')
         playback = true
-        //sequencePlay($scope.sequences.kick)
-        //sequencePlay($scope.sequences.snare)
+        schedulePlay($scope.sequences.kick, context.currentTime)
+        schedulePlay($scope.sequences.snare, context.currentTime)
         schedulePlay($scope.sequences.hihat, context.currentTime)
-        //sequencePlay($scope.sequences.rim)
-        //sequencePlay($scope.sequences.cowbell)
+        schedulePlay($scope.sequences.rim, context.currentTime)
+        schedulePlay($scope.sequences.cowbell, context.currentTime)
     }
 
     $scope.stop = function() {
