@@ -37,7 +37,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     loadAudio('audio/rim.mp3', 'rim')
     loadAudio('audio/cowbell.mp3', 'cowbell')
 
-        // Global transport object for dealing timing
+    // Global transport object for dealing timing
     var transport = {
         'tempo':  120,
         'isPlaying': false,
