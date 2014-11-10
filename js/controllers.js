@@ -108,7 +108,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     }
 
     $scope.removeTrack = function(sequence) {
-        var index = $scope.sequences.indexOf[sequence]
+        var index = $scope.sequences.indexOf(sequence)
         $scope.sequences.splice(index, 1)
     }
 
