@@ -15,10 +15,10 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         {'sample': $scope.samples[0], 'gain': 1.0, 'buffer': null,
         'pattern':  ['k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-']
         },
-        {'sample': $scope.samples[1], 'gain': 1.0, 'buffer': null,
+        {'sample': $scope.samples[1], 'gain': 0.7, 'buffer': null,
         'pattern':  ['-', '-', '-', '-', 's', '-', '-', '-', '-', '-', '-', '-', 's', '-', '-', '-']
         },
-        {'sample': $scope.samples[2], 'gain': 1.0, 'buffer': null,
+        {'sample': $scope.samples[2], 'gain': 0.5, 'buffer': null,
         'pattern':  ['-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-']
         },
     ]
@@ -41,7 +41,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         loadAudio(sample.url, $scope.sequences[i])
     }
 
-    // Global transport object for dealing timing
+    // Global transport object for dealing with timing
     var transport = {
         'tempo':  120,
         'isPlaying': false,
