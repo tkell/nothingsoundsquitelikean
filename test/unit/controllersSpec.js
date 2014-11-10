@@ -1,6 +1,7 @@
 describe('SequencerControl', function(){
     var scope
 
+    // Set up
     beforeEach(angular.mock.module('sequenceApp'))  
     beforeEach(inject(function($controller, $rootScope){    
         scope = $rootScope.$new()
@@ -40,6 +41,7 @@ describe('SequencerControl', function(){
         expect(scope.sequences[trackName].displayChar).toBe(displayChar)
         expect(scope.sequences[trackName].pattern.length).toBe(16)
     })
+
     // Tests for removing tracks
     it('should remove a track from the sequence', function(){
         var numTracks = Object.keys(scope.sequences).length
@@ -62,7 +64,7 @@ describe('SequencerControl', function(){
 
     // - that updateTempo works, 
     // - that the bounds on tempos work, 
-    // - and that garbage input is deal with.
+    // - and that bad input is deal with.
 
     // - that start and stop actually start and stop the sequencer
 

@@ -15,12 +15,6 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         'hihat': {'name': 'Hihat', 'buffer': null, 'displayChar': 'h', 'gain': 0.6,
         'pattern':  ['-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-']
         },
-        'rim': {'name': 'Rim', 'buffer': null, 'displayChar': 'r', 'gain': 0.6,
-        'pattern':  ['-', 'r', '-', 'r', '-', 'r', 'r', '-', '-', '-', '-', '-', '-', '-', '-', '-']
-        },
-        // 'cowbell': {'name': 'Cowbell', 'buffer': null, 'displayChar': 'c', 'gain': 0.5,
-        // 'pattern':  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'c', '-', 'c', '-', '-']
-        // },
     }
 
     $scope.samples = [
