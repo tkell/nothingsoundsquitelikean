@@ -107,7 +107,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
             for (sequenceName in $scope.sequences) {
                 var seq = $scope.sequences[sequenceName]
                 if (seq.pattern[transport.currentIndex] != '-') {
-                     playSound(nextNoteTime, seq.buffer, seq.gain)
+                    playSound(nextNoteTime, seq.buffer, seq.gain)
                 } else if (transport.currentIndex == 0 && transport.numLoops == 0) {
                     // Bootstrap the start:
                     // Web Audio will not start the audioContext timer moving, 
