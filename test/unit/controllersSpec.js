@@ -35,13 +35,18 @@ describe('SequencerControl', function() {
         scope.nextSample = scope.samples[0]
         var displayChar = scope.nextSample.displayChar
         var trackName = scope.nextSample.name
-
         scope.addTrack()
-
         var trackIndex = scope.sequences.length - 1
         expect(scope.sequences[trackIndex].sample).toBe(scope.nextSample)
         expect(scope.sequences[trackIndex].gain).toBe(0.7)
         expect(scope.sequences[trackIndex].pattern.length).toBe(16)
+    })
+
+    it('should not add a null track', function() {
+        var numTracks = scope.sequences.length
+        scope.nextSample = null
+        scope.addTrack()
+        expect(scope.sequences.length).toBe(numTracks)
     })
 
     // Tests for removing tracks

@@ -103,6 +103,9 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     }
 
     $scope.addTrack = function() {
+        if ($scope.nextSample == null) {
+            return
+        }
         var newSequence = {
             'sample': $scope.nextSample,
             'gain': 0.7, 
