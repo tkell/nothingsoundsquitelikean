@@ -9,7 +9,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         'kick': {'name': 'Kick', 'buffer': null, 'displayChar': 'k', 'gain': 1.0,
         'pattern':  ['k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-']
         },
-        'snare': {'name': 'Snare', 'buffer': null, 'displayChar': 's', 'gain': 1.0,
+        'snare': {'name': 'Snare', 'buffer': null, 'displayChar': 's', 'gain': 0.8,
         'pattern':  ['-', '-', '-', '-', 's', '-', '-', '-', '-', '-', '-', '-', 's', '-', '-', '-']
         },
         'hihat': {'name': 'Hihat', 'buffer': null, 'displayChar': 'h', 'gain': 0.6,
@@ -50,9 +50,6 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         'scheduleInterval': 30, // milliseconds
     }
     
-    var currentlyQueued = []
-    var currentCallbacks = []
-
     $scope.toggleBeat = function(sequence, index) {
         var letter = sequence.displayChar
         if (sequence.pattern[index] == '-') {
@@ -72,19 +69,6 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         console.log('stopping the sequencer')
         transport.playback = false
         transport.numLoops = 0
-        // Stop queued sounds
-        for (var i = 0; i < currentlyQueued.length; i++) {
-            if (currentlyQueued[i] != null) {
-                currentlyQueued[i].stop()
-            }
-        }
-        currentlyQueued = []
-
-        // Clear queued callbacks
-        for (var i = 0; i < currentCallbacks.length; i++) {
-            $timeout.cancel(currentCallbacks[i])
-        }
-        currentCallbacks = []
     }
 
     $scope.checkIndex = function(index) {
@@ -112,8 +96,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
             for (sequenceName in $scope.sequences) {
                 var seq = $scope.sequences[sequenceName]
                 if (seq.pattern[transport.currentIndex] != '-') {
-                    queuedSound = playSound(nextNoteTime, seq.buffer, seq.gain)
-                    currentlyQueued.push(queuedSound)
+                     playSound(nextNoteTime, seq.buffer, seq.gain)
                 }
             }
             // Increment the overall sequence,
