@@ -22,7 +22,31 @@ describe('SequencerControl', function(){
         expect(scope.sequences.kick.pattern[index]).toBe(displayChar)
     })
 
-    // Tests for adding / removing tracks will go here
+    // Tests for adding tracks
+    it('should add a track to the sequence', function(){
+        var numTracks = Object.keys(scope.sequences).length
+        scope.nextSample = scope.samples[4]
+        scope.addTrack()
+        expect(Object.keys(scope.sequences).length).toBe(numTracks + 1)
+    })
+
+    it('should give the new track various attributes', function(){
+        scope.nextSample = scope.samples[4]
+        var displayChar = scope.nextSample.displayChar
+        var trackName = scope.nextSample.name
+
+        scope.addTrack()
+        expect(scope.sequences[trackName].name).toBe(trackName)
+        expect(scope.sequences[trackName].displayChar).toBe(displayChar)
+        expect(scope.sequences[trackName].pattern.length).toBe(16)
+    })
+    // Tests for removing tracks
+    it('should remove a track from the sequence', function(){
+        var numTracks = Object.keys(scope.sequences).length
+        scope.removeTrack('kick')
+        expect(Object.keys(scope.sequences).length).toBe(numTracks -1)
+    })
+
 
     // From here, we have a problem:  Angular does not like the idea of testing private methods,
     // nor does it like providing access to private variables like my transport.

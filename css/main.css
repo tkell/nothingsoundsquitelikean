@@ -27,6 +27,18 @@ input.tempo {
     font-size: 150%
 }
 
+.add-track {
+    text-align: center;
+}
+
+input.add-track-name {
+    width: 40px;
+}
+input.add-track-char {
+    width: 40px;
+}
+
+
 .beat {
     font-size: 250%
 }

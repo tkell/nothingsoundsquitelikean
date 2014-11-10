@@ -18,10 +18,19 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         'rim': {'name': 'Rim', 'buffer': null, 'displayChar': 'r', 'gain': 0.6,
         'pattern':  ['-', 'r', '-', 'r', '-', 'r', 'r', '-', '-', '-', '-', '-', '-', '-', '-', '-']
         },
-        'cowbell': {'name': 'Cowbell', 'buffer': null, 'displayChar': 'c', 'gain': 0.5,
-        'pattern':  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'c', '-', 'c', '-', '-']
-        },
+        // 'cowbell': {'name': 'Cowbell', 'buffer': null, 'displayChar': 'c', 'gain': 0.5,
+        // 'pattern':  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'c', '-', 'c', '-', '-']
+        // },
     }
+
+    $scope.samples = [
+        {'name': 'kick', 'displayChar': 'k', 'url': 'audio/kick.mp3'},
+        {'name': 'snare', 'displayChar': 's', 'url': 'audio/snare.mp3'},
+        {'name': 'hihat', 'displayChar': 'h', 'url': 'audio/hihat.mp3'},
+        {'name': 'rim', 'displayChar': 'r', 'url': 'audio/rim.mp3'},
+        {'name': 'cowbell', 'displayChar':  'c', 'url': 'audio/cowbell.mp3'},
+    ]
+    $scope.nextSample = $scope.samples[4];
 
     loadAudio = function(url, track) {
         $http.get(url, {'responseType': 'arraybuffer'}).success(function(data) {
@@ -35,7 +44,6 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     loadAudio('audio/snare.mp3', 'snare')
     loadAudio('audio/hihat.mp3', 'hihat')
     loadAudio('audio/rim.mp3', 'rim')
-    loadAudio('audio/cowbell.mp3', 'cowbell')
 
     // Global transport object for dealing timing
     var transport = {
@@ -89,6 +97,26 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
             return false
         }
     }
+
+    $scope.addTrack = function() {
+        var name = $scope.nextSample.name
+        var displayChar = $scope.nextSample.displayChar
+        var url = $scope.nextSample.url
+
+        $scope.sequences[name] = {
+            'name': name, 
+            'buffer': null, 
+            'displayChar': displayChar, 
+            'gain': 0.7,
+            'pattern':  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+        }
+        loadAudio(url, name)
+    }
+
+    $scope.removeTrack = function(name) {
+        delete $scope.sequences[name]
+    }
+
 
     function getNextNoteTime(startTime, sixteenthNote) {
         var loopOffset = transport.numLoops * (240.0 / transport.tempo)
