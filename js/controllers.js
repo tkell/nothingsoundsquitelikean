@@ -6,19 +6,21 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     var context = new AudioContext();
 
     $scope.sequences = {
-        'kick': {'name': 'Kick', 'buffer': null, 'i': -1, 'displayChar': 'k', 'gain': 1.0,
+        'kick': {'name': 'Kick', 'buffer': null, 'i': 0, 'displayChar': 'k', 'gain': 1.0,
         'pattern':  ['k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-', 'k', '-', '-', '-']
         },
-        'snare': {'name': 'Snare', 'buffer': null, 'i': -1, 'displayChar': 's', 'gain': 1.0,
+        'snare': {'name': 'Snare', 'buffer': null, 'i': 0, 'displayChar': 's', 'gain': 1.0,
         'pattern':  ['-', '-', '-', '-', 's', '-', '-', '-', '-', '-', '-', '-', 's', '-', '-', '-']
         },
-        'hihat': {'name': 'Hihat', 'buffer': null, 'i': -1, 'displayChar': 'h', 'gain': 0.6,
+        'hihat': {'name': 'Hihat', 'buffer': null, 'i': 0, 
+        'displayChar': 'h', 'visualIndex': -1,
+        'gain': 0.6,
         'pattern':  ['-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-', '-', '-', 'h', '-']
         },
-        'rim': {'name': 'Rim', 'buffer': null, 'i': -1, 'displayChar': 'r', 'gain': 0.6,
+        'rim': {'name': 'Rim', 'buffer': null, 'i': 0, 'displayChar': 'r', 'gain': 0.6,
         'pattern':  ['-', 'r', '-', 'r', '-', 'r', 'r', '-', '-', '-', '-', '-', '-', '-', '-', '-']
         },
-        'cowbell': {'name': 'Cowbell', 'buffer': null, 'i': -1, 'displayChar': 'c', 'gain': 0.5,
+        'cowbell': {'name': 'Cowbell', 'buffer': null, 'i': 0, 'displayChar': 'c', 'gain': 0.5,
         'pattern':  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'c', '-', 'c', '-', '-']
         },
     }
@@ -38,6 +40,11 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     loadAudio('audio/cowbell.mp3', 'cowbell')
 
     $scope.tempo = 120
+
+    var numLoops = 0
+    var lastIndex = 0
+    var loopCounter = 0
+
     var buffers = {}
     var currentlyQueued = []
     var currentCallbacks = []
@@ -56,16 +63,17 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     $scope.start = function() {
         console.log('starting the sequencer')
         playback = true
-        sequencePlay($scope.sequences.kick)
-        sequencePlay($scope.sequences.snare)
-        sequencePlay($scope.sequences.hihat)
-        sequencePlay($scope.sequences.rim)
-        sequencePlay($scope.sequences.cowbell)
+        //sequencePlay($scope.sequences.kick)
+        //sequencePlay($scope.sequences.snare)
+        schedulePlay($scope.sequences.hihat, context.currentTime)
+        //sequencePlay($scope.sequences.rim)
+        //sequencePlay($scope.sequences.cowbell)
     }
 
     $scope.stop = function() {
         console.log('stopping the sequencer')
         playback = false
+        numLoops = 0
         // Stop queued sounds
         for (var i = 0; i < currentlyQueued.length; i++) {
             if (currentlyQueued[i] != null) {
@@ -82,21 +90,73 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     }
 
     $scope.checkIndex = function(sequence, index) {
-        if (sequence.i == index) {
+        if (sequence.visualIndex == index) {
             return true
         } else {
             return false
         }
     }
 
-    function tick(sequence, index) {
-        sequence.i = index
+
+    schedulePlay = function(sequence, startTime) {
+        if (playback == false) {
+            lastIndex = sequence.i
+            return
+        }
+
+        var sixteenthNote = 60.0 / $scope.tempo / 4.0 // seconds
+        var lookAhead = 0.1 // seconds
+        var timeInterval = 30 // milliseconds
+
+        var nextNoteTime = startTime + (numLoops * (240.0 / $scope.tempo)) + ((sequence.i - lastIndex)  * sixteenthNote)
+        console.log(context.currentTime, sequence.i, lookAhead, nextNoteTime, numLoops)
+
+        while (nextNoteTime < context.currentTime + lookAhead) {
+            if (sequence.pattern[sequence.i] != '-') {
+                console.log('we would schedule a note at ', nextNoteTime)
+                queuedSound = playSound(nextNoteTime, sequence.buffer, sequence.gain)
+                currentlyQueued.push(queuedSound)
+            }
+            // Increment the sequence,
+            sequence.i = (sequence.i + 1) % 16
+
+            // Increment the sequence's graphics, on schedule
+            var theTime = (nextNoteTime - context.currentTime) *  1000
+            $timeout(function() {
+                sequence.visualIndex = (sequence.visualIndex + 1) % 16
+            }, theTime)
+
+            // Keep track of where our audio-time loop is
+            loopCounter = loopCounter + 1
+            if (loopCounter == 16) {
+                numLoops = numLoops + 1
+                loopCounter = 0
+            }
+
+            // Update the tempo
+            sixteenthNote = 60.0 / $scope.tempo / 4.0 // seconds
+            nextNoteTime = nextNoteTime + sixteenthNote
+        }
+
+        // Schedule the next call
+        $timeout(function() {
+            schedulePlay(sequence, startTime)
+        }, timeInterval)
     }
+
+
+
+
+
+
+
 
     // Master play / loop function
     sequencePlay = function (sequence, onPlayCallback) {
         var sixteenthNote = 60.0 / $scope.tempo / 4.0
+        var lookAhead = sixteenthNote - (sixteenthNote / 4)
         var when = context.currentTime
+
         for (var i = 0; i < sequence.pattern.length; i++) {
             if (playback == false) {
                 break
