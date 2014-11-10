@@ -119,7 +119,6 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         $scope.sequences.splice(index, 1)
     }
 
-
     // Private functions for playback
     function getNextNoteTime(startTime, sixteenthNote) {
         var loopOffset = transport.numLoops * (240.0 / transport.tempo)
@@ -132,8 +131,11 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
             transport.oldIndex = transport.currentIndex
             return
         }
+        // Find the time until the next note
         var sixteenthNote = 60.0 / transport.tempo / 4.0 // seconds
         var nextNoteTime = getNextNoteTime(startTime, sixteenthNote)
+
+        // Schedule the next note or notes using playSound
         while (nextNoteTime < context.currentTime + transport.lookAhead) {
             for (var i = 0; i < $scope.sequences.length; i++) {
                 var seq = $scope.sequences[i]
@@ -167,7 +169,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
             nextNoteTime = nextNoteTime + sixteenthNote
         }
 
-        // Schedule the next call
+        // Once all notes in this range are added, schedule the next call
         $timeout(function() {
             schedulePlay(startTime)
         }, transport.scheduleInterval)
@@ -177,13 +179,10 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     playSound = function(when, buffer, gain) {
         var source = context.createBufferSource()
         source.buffer = buffer
-
         var gainNode = context.createGain();
         gainNode.gain.value = gain;
-
         source.connect(gainNode);
         gainNode.connect(context.destination);
-        
         source.start(when)
         return source
     }

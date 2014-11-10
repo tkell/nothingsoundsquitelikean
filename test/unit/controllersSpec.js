@@ -8,7 +8,7 @@ describe('SequencerControl', function() {
         $controller('SequencerControl', {$scope:scope})
     }))
 
-    // Tests for toggleBeats
+    // Tests for turning beats on and off
     it('should toggle beats off', function() {
         var index = 0
         scope.sequences[0].pattern[index] = 'k'
