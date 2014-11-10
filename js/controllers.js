@@ -67,8 +67,17 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     $scope.updateTempo = function(e) {
         if (e.keyCode == 13) {
             var inputTempo = parseInt(e.currentTarget.value)
-            if (inputTempo > 50 && inputTempo < 300) {
+            var wasPlaying = transport.isPlaying
+            if (inputTempo > 0 && inputTempo < 1000) {
+                $scope.stop()
                 transport.tempo = inputTempo
+                // If we wait for a bit here, we don't get the EXPLOSION.
+                // Not ideal, but I am out of time.
+                if (wasPlaying == true) {
+                    $timeout(function() {
+                       $scope.start()
+                    }, 50)
+                }
             } else {
                 console.log('Error:  Tempo value out of range')
             }           
@@ -76,14 +85,12 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     }
 
     $scope.start = function() {
-        console.log('starting the sequencer')
-        transport.playback = true
+        transport.isPlaying = true
         schedulePlay(context.currentTime)
     }
 
     $scope.stop = function() {
-        console.log('stopping the sequencer')
-        transport.playback = false
+        transport.isPlaying = false
         transport.numLoops = 0
     }
 
@@ -121,7 +128,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
     }
 
     schedulePlay = function(startTime) {
-        if (transport.playback == false) {
+        if (transport.isPlaying == false) {
             transport.oldIndex = transport.currentIndex
             return
         }
