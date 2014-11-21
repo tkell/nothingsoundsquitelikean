@@ -7,7 +7,7 @@ sequenceApp.controller('SequencerControl', function ($scope, $http, $timeout) {
         {'name': 'kick', 'displayChar': 'k', 'url': 'audio/kick.mp3'},
         {'name': 'snare', 'displayChar': 's', 'url': 'audio/snare.mp3'},
         {'name': 'hihat', 'displayChar': 'h', 'url': 'audio/hihat.mp3'},
-        {'name': 'rim', 'displayChar': 'r', 'url': 'audio/rim.mp3'},
+        {'name': 'rim', 'displayChar': 'r', 'url': 'audio/rim.wav'},
         {'name': 'cowbell', 'displayChar':  'c', 'url': 'audio/cowbell.mp3'},
     ]
 
